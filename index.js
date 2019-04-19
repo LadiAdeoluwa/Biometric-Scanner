@@ -22,7 +22,7 @@ const constructMessage = message => new Buffer.from(message, 'utf8');
 const processEnrolledTemplate = async cb => {
 	let file = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
 	// TODO: Delete file after usage.
-	
+
 	cb(file) // raw file to the ble client side.
 };
 
@@ -128,7 +128,7 @@ async function initEnrollment(cb, killProcess = false) {
 								if (firstRunDone && j > 1) {
 									cb(constructMessage('PLACE FINGER'));
 								}
-							}, 2000);
+							}, 1800);
 							setTimeout(async function () {
 								let result = await doEnrollmentCount(j);
 								if (!isNaN(result) && j !== 3) {
@@ -144,7 +144,7 @@ async function initEnrollment(cb, killProcess = false) {
 									return cb(constructMessage('Error, please try again.'));
 								}
 								if (--i) controlledStepLoop(i); //  decrement i and call myLoop again if i > 0
-							}, 3000);
+							}, 1800);
 						})(3);
 					}
 				}, 2000);
