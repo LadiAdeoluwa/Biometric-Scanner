@@ -136,19 +136,6 @@ void EnrollStart(int specify_ID)
   send_receive_command(); 
 }  
 
-void EnrollStart1(int specify_ID)
-{
-  commandPacket.start1=COMMAND_START_CODE1;  
-  commandPacket.start2=COMMAND_START_CODE2;
-  commandPacket.deviceId=DEVICE_ID;
-  commandPacket.parameter=specify_ID; 
-  commandPacket.command=ENROLLSTART;
-  commandPacket.checkSum=CalcChkSumOfCmdAckPkt(&commandPacket);
-  
-  send_receive_command(); 
-
-  
-}  
 
 void Enroll1()
 {
@@ -221,56 +208,6 @@ void Enroll3()
    
 }
 
-void Identify()
-{
-  commandPacket.start1=COMMAND_START_CODE1;  
-  commandPacket.start2=COMMAND_START_CODE2;
-  commandPacket.deviceId=DEVICE_ID;
-  commandPacket.parameter=0x00000000; 
-  commandPacket.command=IDENTIFY;
-  commandPacket.checkSum=CalcChkSumOfCmdAckPkt(&commandPacket);
-  
-  send_receive_command();
-}
-
-void DeleteId(int specify_ID)
-{
-  commandPacket.start1=COMMAND_START_CODE1;  
-  commandPacket.start2=COMMAND_START_CODE2;
-  commandPacket.deviceId=DEVICE_ID;
-  commandPacket.parameter=specify_ID; 
-  commandPacket.command=DELETEID;
-  commandPacket.checkSum=CalcChkSumOfCmdAckPkt(&commandPacket);
-  
-  send_receive_command(); 
-}  
-
-void Enroll(int Enroll_define)
-{
-  SHORT Enroll_command;
-  
-  switch(Enroll_define)
-    {
-      case 1:
-             Enroll_command=ENROLL1;
-             break;
-      case 2:
-             Enroll_command=ENROLL2;
-             break;
-      case 3:
-             Enroll_command=ENROLL3;
-             break;      
-    }
-  commandPacket.start1=COMMAND_START_CODE1;  
-  commandPacket.start2=COMMAND_START_CODE2;
-  commandPacket.deviceId=DEVICE_ID;
-  commandPacket.parameter=0x00000000;
-  commandPacket.command=Enroll_command;
-  commandPacket.checkSum=CalcChkSumOfCmdAckPkt(&commandPacket);
-  
-  send_receive_command(); 
-}
-
 void IsPressFinger()
 {
   commandPacket.start1=COMMAND_START_CODE1;  
@@ -293,16 +230,4 @@ void CaptureFinger(LONG picture_quality)
   commandPacket.checkSum=CalcChkSumOfCmdAckPkt(&commandPacket);
   
   send_receive_command();  
-}
-
-void DeleteAll()
-{
-  commandPacket.start1=COMMAND_START_CODE1;  
-  commandPacket.start2=COMMAND_START_CODE2;
-  commandPacket.deviceId=DEVICE_ID;
-  commandPacket.parameter=0x00000000; 
-  commandPacket.command=DELETEALL;
-  commandPacket.checkSum=CalcChkSumOfCmdAckPkt(&commandPacket);
-  
-  send_receive_command();
 }

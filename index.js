@@ -4,13 +4,13 @@ const path = require('path');
 const bleno = require('bleno');
 const fs = require('fs');
 
-const SDKFile = path.join(path.resolve(__dirname, 'SoftcomFingerPrintSDK'));
+const SDKFile = path.join(path.resolve(__dirname, 'FingerPrintSDKSource/SoftcomFingerPrintSDK'));
 
 const BlenoPrimaryService = bleno.PrimaryService;
 const BlenoCharacteristic = bleno.Characteristic;
 const BlenoDescriptor = bleno.Descriptor;
 
-let ACTION_TODO = 'IDENTIFY';
+let ACTION_TODO = 'ENROL';
 /**
  * Constructs a message as a buffer for reuse in the application.
  * @param message
@@ -60,7 +60,7 @@ const SoftcomFingerPrintSDK = () => {
 		 * @returns {Promise<Buffer>}
 		 * @constructor
 		 */
-		StartEnrollment: async (isHost) => await spawnSync(SDKFile, ['start', isHost ? 'host' : ''], options),
+		StartEnrollment: async (isHost) => await spawnSync(SDKFile, ['start', isHost ? 'host' : 'basic'], options),
 		/**
 		 * Enroll the capture finger {number} times.
 		 * @param number
@@ -87,7 +87,7 @@ async function checkFingerPress(delay = 300) {
 
 async function doEnrollmentCount(count) {
 	const { stdout: EnrolStatus } = await SoftcomFingerPrintSDK()
-	.EnrollHostFinger(count);
+	.EnrollFinger(count);
 	return EnrolStatus.toString()
 	.split('::')[1];
 }
@@ -109,10 +109,10 @@ async function initEnrollment(cb, killProcess = false) {
 		if (deviceOpen.toString()
 		.trim() === 'SUCCESS') {
 			// Check if finger is pressed while telling the user to press their finger on the device.
-			if (await checkFingerPress(3000)) {
+			if (await checkFingerPress(1000)) {
 				setTimeout(async function () {
 					const { stdout: EnrolStart } = await SoftcomFingerPrintSDK()
-					.StartEnrollment(true); // isHost.
+					.StartEnrollment(false); // isHost.
 
 					/**
 					 * Get the unused ID from the `start`
@@ -128,7 +128,7 @@ async function initEnrollment(cb, killProcess = false) {
 								if (firstRunDone && j > 1) {
 									cb(constructMessage('PLACE FINGER'));
 								}
-							}, 1800);
+							}, 1000);
 							setTimeout(async function () {
 								let result = await doEnrollmentCount(j);
 								if (!isNaN(result) && j !== 3) {
@@ -144,10 +144,10 @@ async function initEnrollment(cb, killProcess = false) {
 									return cb(constructMessage('Error, please try again.'));
 								}
 								if (--i) controlledStepLoop(i); //  decrement i and call myLoop again if i > 0
-							}, 1800);
+							}, 1000);
 						})(3);
 					}
-				}, 2000);
+				}, 1000);
 			} else {
 				return cb(constructMessage('Finger is not pressed'));
 			}

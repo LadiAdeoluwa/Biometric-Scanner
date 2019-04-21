@@ -8,7 +8,7 @@
 #define DATA_START_CODE1       0x5A
 #define DATA_START_CODE2       0xA5
 
-#define DATA_PACKAGE_LENGTH    498   //data package area
+#define DATA_PACKAGE_LENGTH    504   //data package area
 
 #define DEVICE_ID	           0x0001
 
