@@ -89,9 +89,7 @@ int main(int argc, const char *argv[])
     {
         LED_open();
 
-        IsPressFinger();
-
-        while (returnParameter == 0x1012) // while finger is not pressed, keep running the isPressedFinger();never enter into this block if the condition is not met.
+        while (1) // while finger is not pressed, keep running the isPressedFinger();never enter into this block if the condition is not met.
         {
             IsPressFinger();
             if (returnParameter != 0x1012)
@@ -206,7 +204,7 @@ int main(int argc, const char *argv[])
             }
             else if ((returnAck == ACK))
             {
-                fprintf(stdout, "ENROLL SUCCESS ::%x", instance);
+                fprintf(stdout, "ENROLL SUCCESS ::%d", instance);
                 LED_close();
             }
             LED_open();

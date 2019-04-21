@@ -87,25 +87,27 @@ async function doEnrollmentCount(count) {
 	.EnrollHostFinger(count);
 
 	const RESULT = EnrolStatus.toString();
-	return RESULT.indexOf('::') !== -1 ? RESULT.split('::')[1] : '#' + RESULT.split('##')[1];
+	console.log(RESULT, ' RESULT FROM The enrolment');
+	return RESULT.indexOf('::') !== -1 ? RESULT.split('::')[1] : '#' + RESULT.split('##')[1].toUpperCase();
 }
 
 const errorHandler = (code) => {
+console.log('Error Code: ', code);
 	const ERROR_MESSAGES = [
 		{
-			code: '#0x100C',
+			code: '#100C',
 			message: 'BAD FINGER'
 		},
 		{
-			code: '#0x100D',
+			code: '#100D',
 			message: 'ENROLMENT FAILURE, TRY AGAIN'
 		},
 		{
-			code: '#0x1012',
+			code: '#1012',
 			message: 'FINGER IS NOT PRESSED'
 		},
 		{
-			code: '#0x1001',
+			code: '#1001',
 			message: 'CAPTURE TIMEOUT, TRY AGAIN'
 		}
 		// TODO: Add error codes and messages here.
@@ -169,7 +171,7 @@ async function initEnrollment(cb, killProcess = false) {
 								return cb(constructMessage(ERROR));
 							}
 							if (--i) controlledStepLoop(i);
-						}, 1000);
+						}, 250);
 					})(3);
 				}
 			} else {
@@ -263,7 +265,8 @@ const FingerprintNotifyOnlyCharacteristic = function () {
 
 util.inherits(FingerprintNotifyOnlyCharacteristic, BlenoCharacteristic);
 
-FingerprintNotifyOnlyCharacteristic.prototype.onSubscribe = async (maxValueSize, updateCallback) => {
+
+FingerprintNotifyOnlyCharacteristic.prototype.onSubscribe = async (maxValueSize = 500, updateCallback) => {
 	console.log(maxValueSize, ' Max value Size');
 	await initEnrollment(updateCallback, false);
 };

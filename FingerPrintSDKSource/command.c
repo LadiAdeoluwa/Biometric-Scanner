@@ -168,16 +168,17 @@ void Enroll3()
    send_receive_command();
 
   if(returnAck!=ACK)
-		{delay(500);
+		{
+      delay(500);
 		 printf("Enrollment Could Not Be Completed\n");
 	   return;
 	  }
-    delay(500);
-    printf("Take off finger\n");
+    
+    // printf("Take off finger\n");
     if (returnAck == ACK) //decide whether enroll ok or fail
     
         {//delay(500);
-          printf("Enroll Finish!\n");
+          // printf("Enroll Finish!\n");
         receiveCommand(&dataPacket.start1, DATA_PACKAGE_LENGTH); //read template to receive buffer from fingeprint module
      
     char filename[64];  
@@ -193,8 +194,9 @@ void Enroll3()
       fwrite(dataPacket.data, 1, sizeof(dataPacket.data), pFile);
 
     fclose(pFile);
-    delay(500);
-    printf("Created %s on this folder!\n", filename);
+    LED_close();
+    
+    // printf("Created %s on this folder!\n", filename);
         }
         else
         {
