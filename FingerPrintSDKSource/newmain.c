@@ -186,7 +186,7 @@ int main(int argc, const char *argv[])
             Enroll1();
             if (returnAck != ACK)
             {
-                fprintf(stdout, "ENROLL FAILED ::%d", instance);
+                fprintf(stdout, "ENROLL FAILED ##%x", returnParameter);
                 LED_close();
             }
             else if ((returnAck == ACK))
@@ -201,12 +201,12 @@ int main(int argc, const char *argv[])
             Enroll2();
             if (returnAck != ACK)
             {
-                fprintf(stdout, "ENROLL FAILED ::%d", instance);
+                fprintf(stdout, "ENROLL FAILED ##%x", returnParameter);
                 LED_close();
             }
             else if ((returnAck == ACK))
             {
-                fprintf(stdout, "ENROLL SUCCESS ::%d", instance);
+                fprintf(stdout, "ENROLL SUCCESS ::%x", instance);
                 LED_close();
             }
             LED_open();
@@ -216,7 +216,7 @@ int main(int argc, const char *argv[])
             Enroll3();
             if (returnAck != ACK)
             {
-                fprintf(stdout, "ENROLL FAILED ::%d", instance);
+                fprintf(stdout, "ENROLL FAILED ##%x", returnParameter);
             }
             else if ((returnAck == ACK))
             {

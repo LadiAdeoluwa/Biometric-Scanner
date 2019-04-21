@@ -4,20 +4,13 @@ const path = require('path');
 const bleno = require('bleno');
 const fs = require('fs');
 
-const __delay__ = (interval) => (function delayHandler(i) {
-	setTimeout(async function () {
-		// Do nothing.
-		if (--i) delayHandler(i);
-	}, 1000 * interval);
-})(interval);
-
 const SDKFile = path.join(path.resolve(__dirname, 'FingerPrintSDKSource/SoftcomFingerPrintSDK'));
 
 const BlenoPrimaryService = bleno.PrimaryService;
 const BlenoCharacteristic = bleno.Characteristic;
 const BlenoDescriptor = bleno.Descriptor;
 
-let ACTION_TODO = 'ENROL';
+
 /**
  * Constructs a message as a buffer for reuse in the application.
  * @param message
@@ -97,22 +90,30 @@ async function doEnrollmentCount(count) {
 	return RESULT.indexOf('::') !== -1 ? RESULT.split('::')[1] : '#' + RESULT.split('##')[1];
 }
 
-const errorHandler = (errorCode) => {
+const errorHandler = (code) => {
 	const ERROR_MESSAGES = [
 		{
-			code: '112',
-			message: 'BAD FINGER PRINT'
+			code: '#0x100C',
+			message: 'BAD FINGER'
 		},
 		{
-			code: '100',
-			message: 'FINGER ALREADY ENROLLED'
+			code: '#0x100D',
+			message: 'ENROLMENT FAILURE, TRY AGAIN'
+		},
+		{
+			code: '#0x1012',
+			message: 'FINGER IS NOT PRESSED'
+		},
+		{
+			code: '#0x1001',
+			message: 'CAPTURE TIMEOUT, TRY AGAIN'
 		}
 		// TODO: Add error codes and messages here.
 	];
 
-	const ERROR_MESSAGE = ERROR_MESSAGES.find(err => err.code === errorCode);
+	const ERROR_MESSAGE = ERROR_MESSAGES.find(err => err.code === code);
 
-	return ERROR_MESSAGE ? ERROR_MESSAGE : 'INTERNAL SYSTEM ERROR:: MESSAGE CANNOT BE SPOKEN OF';
+	return ERROR_MESSAGE ? ERROR_MESSAGE.message : 'ERROR MESSAGE NOT DEFINED';
 };
 
 /**
