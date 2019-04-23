@@ -24,32 +24,14 @@ const constructHexMessage = message => new Buffer.from(message, 'hex');
 
 const processEnrolledTemplate = async cb => {
 	
-	let file = fs.createReadStream(path.resolve(path.join(__dirname, 'tpl.bin')));
-	file.on('data', (chunk)=> {
-		console.log(chunk, ' Data chunk');
-		
-		cb(chunk);
-	})
-	
-	// let hexFile = file.toString('hex');
-	// console.log(hexFile, ' hex file');
-	// console.log('Hex file length', hexFile.length);
-	
-	// for(const shard of file.values()){
-	// 	cb(shard); // omg, ffffI'm frustrated. lol.what happened
-	// } // hold on. brb.
-	// console.log('buffer', file);
-	// cb(file);				
-	
-	
-	// for (let index = 0; index < hexFile.length; index++) {
-	// 	console.log(hexFile[index], ' Character.');
-	// 	cb(hexFile[index]);
-	// 	if(index >= (hexFile.length - 1)) {
-	// 		cb(constructMessage('PROCESS COMPLETE'));
-	// 	}
-	// }
+	let file = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
+let chunkSize = 15; // so that we can +i to make it 16bytes
 
+for ( var i = 0 ; i < ( file.length + chunkSize ) ; i += chunkSize ) {
+    let chunk = file.slice( i, ( i + chunkSize ) );
+	cb(chunk);
+};
+cb(constructMessage("PROCESS COMPLETE"));
 };
 
 /**

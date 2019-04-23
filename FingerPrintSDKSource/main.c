@@ -2,18 +2,19 @@
 #include "stdlib.h"
 #include "define.h"
 #include "command.h"
-
+#include <string.h>
 #include "wiringPi.h"     //load WiringPi library
 #include "wiringSerial.h" //load WiringPi serial library
-#include <string.h>
 
+//Command Line Usage Block
 static void print_usage(const char *pcProgramName)
 {
     printf("Usage: %s not run properly\nExamples : %s open\n          %s close\n           %senrol\n          %sisPressfinger\n", pcProgramName);
 }
 
-int var;
+int var; //UART Handle
 
+/*Main Function Block*/
 int main(int argc, const char *argv[])
 {
     if (argc < 2)
@@ -26,7 +27,7 @@ int main(int argc, const char *argv[])
     int switchNum = 0;
 
     if (wiringPiSetup() == -1)
-        exit(1); //for wir ingPi GPIO
+        exit(1); //for wiringPi GPIO congiguration
 
     //check UART coummunication about WiringPi library,Raspberry and Fingerprint
     if (wiringPiSetup() < 0)
@@ -35,12 +36,14 @@ int main(int argc, const char *argv[])
         return -1;
     }
 
+    // Check UART baudrate between FingerPrint Module & FingerPrint
     if ((var = serialOpen("/dev/ttyS0", 9600)) < 0)
     {
         printf("Raspberry-UART error!");
         return -1;
     }
 
+    //Command Switch Case Instances
     if (strcmp(command, "open") == 0)
     {
         switchNum = 1;
@@ -53,18 +56,19 @@ int main(int argc, const char *argv[])
     {
         switchNum = 3;
     }
-
+    else if (strcmp(command, "enroll") == 0)
+    {
+        switchNum = 4;
+    }
     else if (strcmp(command, "close") == 0)
     {
         switchNum = 5;
     }
-    else if (strcmp(command, "enroll") == 0)
-    {
-        switchNum = 6;
-    }
 
+    //Case Manipulation
     switch (switchNum)
     {
+    //OPEN
     case 1:
         Open();
         if (returnAck == ACK)
@@ -86,6 +90,7 @@ int main(int argc, const char *argv[])
             }
         }
         break;
+    //FINGER
     case 2:
     {
         LED_open();
@@ -103,6 +108,7 @@ int main(int argc, const char *argv[])
 
         break;
     }
+    //ENROLLSTART
     case 3:
     {
         EnrollStart(-1);
@@ -119,45 +125,23 @@ int main(int argc, const char *argv[])
         break;
     }
 
-    case 5:
-
-        Close();
-        if (returnAck == ACK)
-        {
-            LED_close();
-            if (returnAck != ACK)
-            {
-                LED_close();
-                return -1;
-            }
-            fprintf(stdout, "SUCCESS"); // we need to exit the code here.
-            return 0;                   // 0 or - 1 ?
-        }
-        else
-        {
-            {
-                fprintf(stdout, "FAIL");
-                return -1;
-            }
-        }
-        break;
-
-    case 6:
+    //ENROLL
+    case 4:
     {
         const char *input = argv[2];
 
         int instance = 0;
         if (strcmp(input, "1") == 0)
         {
-            instance = 61;
+            instance = 41;
         }
         else if (strcmp(input, "2") == 0)
         {
-            instance = 62;
+            instance = 42;
         }
         else if (strcmp(input, "3") == 0)
         {
-            instance = 63;
+            instance = 43;
         }
 
         int loop_time = 1;
@@ -181,7 +165,7 @@ int main(int argc, const char *argv[])
 
         switch (instance)
         {
-        case 61:
+        case 41:
             Enroll1();
             if (returnAck != ACK)
             {
@@ -196,7 +180,7 @@ int main(int argc, const char *argv[])
             LED_open();
             return -1;
 
-        case 62:
+        case 42:
             Enroll2();
             if (returnAck != ACK)
             {
@@ -211,7 +195,7 @@ int main(int argc, const char *argv[])
             LED_open();
             return -1;
 
-        case 63:
+        case 43:
             Enroll3();
             if (returnAck != ACK)
             {
@@ -226,6 +210,30 @@ int main(int argc, const char *argv[])
             return -1;
         }
     }
+
+    //CLOSE
+    case 5:
+
+        Close();
+        if (returnAck == ACK)
+        {
+            LED_close();
+            if (returnAck != ACK)
+            {
+                LED_close();
+                return -1;
+            }
+            fprintf(stdout, "SUCCESS"); // we need to exit the code here.
+            return 0;                   // 0 or - 1 ?
+        }
+        else
+        {
+            {
+                fprintf(stdout, "FAIL");
+                return -1;
+            }
+        }
+        break;
 
     default:
         print_usage(argv[0]);
