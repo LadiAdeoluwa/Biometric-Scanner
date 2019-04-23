@@ -3,6 +3,8 @@ const { spawnSync } = require('child_process');
 const path = require('path');
 const bleno = require('bleno');
 const fs = require('fs');
+// const zlib = require('zlib');
+// const convertString = require('convert-string');
 
 const SDKFile = path.join(path.resolve(__dirname, 'FingerPrintSDKSource/SoftcomFingerPrintSDK'));
 
@@ -17,13 +19,37 @@ const BlenoDescriptor = bleno.Descriptor;
  * @returns {Buffer}
  */
 const constructMessage = message => new Buffer.from(message, 'utf8');
+const constructHexMessage = message => new Buffer.from(message, 'hex');
 
 
 const processEnrolledTemplate = async cb => {
-	let file = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
-	// TODO: Delete file after usage.
+	
+	let file = fs.createReadStream(path.resolve(path.join(__dirname, 'tpl.bin')));
+	file.on('data', (chunk)=> {
+		console.log(chunk, ' Data chunk');
+		
+		cb(chunk);
+	})
+	
+	// let hexFile = file.toString('hex');
+	// console.log(hexFile, ' hex file');
+	// console.log('Hex file length', hexFile.length);
+	
+	// for(const shard of file.values()){
+	// 	cb(shard); // omg, ffffI'm frustrated. lol.what happened
+	// } // hold on. brb.
+	// console.log('buffer', file);
+	// cb(file);				
+	
+	
+	// for (let index = 0; index < hexFile.length; index++) {
+	// 	console.log(hexFile[index], ' Character.');
+	// 	cb(hexFile[index]);
+	// 	if(index >= (hexFile.length - 1)) {
+	// 		cb(constructMessage('PROCESS COMPLETE'));
+	// 	}
+	// }
 
-	cb(file); // raw file to the ble client side.
 };
 
 /**
@@ -212,7 +238,7 @@ bleno.on('stateChange', function (state) {
 /////////////////////////////////////
 bleno.on('accept', (clientAddress) => {
 	console.log('on :-> accept, client: ' + clientAddress);
-
+	// bleno.mtu = 500; // manual mtu change.
 	bleno.updateRssi();
 });
 
@@ -227,6 +253,7 @@ bleno.on('rssiUpdate', (rssi) => {
 
 // bleno.on('mtuChange', function (mtu) {
 // 	console.log('on -> mtuChange: ' + mtu);
+// 	bleno.mtu = 500; // manual mtu change.
 // });
 
 bleno.on('advertisingStart', function (error) {
