@@ -23,15 +23,28 @@ const constructHexMessage = message => new Buffer.from(message, 'hex');
 
 
 const processEnrolledTemplate = async cb => {
-	
-	let file = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
-let chunkSize = 15; // so that we can +i to make it 16bytes
 
-for ( var i = 0 ; i < ( file.length + chunkSize ) ; i += chunkSize ) {
-    let chunk = file.slice( i, ( i + chunkSize ) );
-	cb(chunk);
-};
-cb(constructMessage("PROCESS COMPLETE"));
+	let file = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
+	let chunkSize = 15; // so that we can +i to make it 16bytes
+
+	for (let i = 0; i < (file.length + chunkSize); i += chunkSize) {
+		let chunk = file.slice(i, (i + chunkSize));
+		cb(chunk);
+	}
+	// Template file sent completely.
+	cb(constructMessage('TEMPLATE COMPLETE'));
+
+	let templateBMP = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
+
+	chunkSize = 18;
+
+	for (let i = 0; i < (templateBMP.length + chunkSize); i += chunkSize) {
+		let chunk = templateBMP.slice(i, (i + chunkSize));
+		cb(chunk);
+	}
+	// Template file sent completely.
+	cb(constructMessage('PROCESS COMPLETE'));
+
 };
 
 /**
@@ -100,7 +113,7 @@ async function doEnrollmentCount(count) {
 }
 
 const errorHandler = (code) => {
-console.log('Error Code: ', code);
+	console.log('Error Code: ', code);
 	const ERROR_MESSAGES = [
 		{
 			code: '#100C',
