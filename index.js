@@ -32,16 +32,16 @@ const processEnrolledTemplate = async cb => {
 		cb(chunk);
 	}
 	// Template file sent completely.
-	cb(constructMessage('TEMPLATE COMPLETE'));
+	//cb(constructMessage('TEMPLATE COMPLETE'));
 
-	let templateBMP = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
+	//let templateBMP = fs.readFileSync(path.resolve(path.join(__dirname, 'tpl.bin')));
 
-	chunkSize = 18;
+	//chunkSize = 18;
 
-	for (let i = 0; i < (templateBMP.length + chunkSize); i += chunkSize) {
-		let chunk = templateBMP.slice(i, (i + chunkSize));
-		cb(chunk);
-	}
+	//for (let i = 0; i < (templateBMP.length + chunkSize); i += chunkSize) {
+	//	let chunk = templateBMP.slice(i, (i + chunkSize));
+	//	cb(chunk);
+	//}
 	// Template file sent completely.
 	cb(constructMessage('PROCESS COMPLETE'));
 
@@ -116,19 +116,19 @@ const errorHandler = (code) => {
 	console.log('Error Code: ', code);
 	const ERROR_MESSAGES = [
 		{
-			code: '#100C',
+			code: '##x100C',
 			message: 'BAD FINGER'
 		},
 		{
-			code: '#100D',
+			code: '##x100D',
 			message: 'ENROLMENT FAILURE, TRY AGAIN'
 		},
 		{
-			code: '#1012',
+			code: '##x1012',
 			message: 'FINGER IS NOT PRESSED'
 		},
 		{
-			code: '#1001',
+			code: '##x1001',
 			message: 'CAPTURE TIMEOUT, TRY AGAIN'
 		}
 		// TODO: Add error codes and messages here.
